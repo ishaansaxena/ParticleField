@@ -1,7 +1,7 @@
 
 // Global Variables
 var canvas, context, H, W, gOrigin;
-var particleCount = 7500; var particles = new Array();
+var particleCount = 5000; var particles = new Array();
 var scaleCoeff = 0.01, forceCoeff = 1, dragCoeff = 4;
 var maxVelocity = 1;
 
