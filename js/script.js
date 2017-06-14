@@ -2,7 +2,7 @@
 // Global Variables
 
 var canvas, context, H, W, gOrigin;
-var particleCount = 10000; var particles = new Array();
+var particleCount = 5000; var particles = new Array();
 var scaleCoeff = 0.01, forceCoeff = 100, dragCoeff = 4;
 var maxVelocity = 1; var mainloop;
 
@@ -209,4 +209,11 @@ function setup() {
 	mainloop = setInterval(loop, 10);
 };
 
+<<<<<<< HEAD:js/script.js
 document.onload = setup();
+=======
+window.addEventListener('mousedown', function(e) {
+	gOrigin.x = e.clientX;
+	gOrigin.y = e.clientY;
+}, false);
+>>>>>>> d9a32ac9472cd332c3d591a4882d1aff0fa61809:script.js
