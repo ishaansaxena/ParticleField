@@ -209,11 +209,4 @@ function setup() {
 	mainloop = setInterval(loop, 10);
 };
 
-<<<<<<< HEAD:js/script.js
 document.onload = setup();
-=======
-window.addEventListener('mousedown', function(e) {
-	gOrigin.x = e.clientX;
-	gOrigin.y = e.clientY;
-}, false);
->>>>>>> d9a32ac9472cd332c3d591a4882d1aff0fa61809:script.js
