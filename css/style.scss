@@ -46,13 +46,14 @@ h2 {
 		right: 10px;
 		width: 2rem;
 		height: 2rem;
-		background: white;
 		border-radius: 50%;
 		z-index: 99;
 		transition: all 0.2s ease;
 		&.open {
-			opacity: 0.25;
 			transform: rotate(45deg);
+			.fa {
+				color: #ccc;
+			}
 		}
 		@media (max-width: 1000px) {
 			top: 10px; bottom: auto;
@@ -64,6 +65,7 @@ h2 {
 			left: 50%;
 			transform: translate(-50%, 0);
 			font-size: 1rem;
+			color: white;
 		}
 	}
 	.controls {

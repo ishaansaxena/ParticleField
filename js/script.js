@@ -124,7 +124,7 @@ Particle.prototype = {
 		
 		var v = this.velocity.length();
 
-		this.acceleration = Vector.sub(gravity, friction).scale(Math.abs(4 * dragCoeff/(1 + dragCoeff * dragCoeff)));
+		this.acceleration = Vector.sub(gravity, friction).scale(Math.abs(4 * dragCoeff/(Math.pow(2.71828, dragCoeff))));
 
 		// Velocity
 		this.velocity.x += this.acceleration.x;
@@ -161,20 +161,26 @@ controls.addEventListener('mouseleave', function(e) {
 }, false);
 
 particleInput.addEventListener('change', function(e) {
-	particleCount = particleInput.value;
+	var c = parseInt(particleInput.value);
 	clearInterval(mainloop);
+	while (c > particles.length) {
+		var p = Particle.random();
+		particles.push(p);
+	}
+	particleCount = c;
 	mainloop = setInterval(loop, 10); 
 }, false);
 
 forceInput.addEventListener('change', function(e) {
-	forceCoeff = forceInput.value;
+	forceCoeff = parseInt(forceInput.value);
 }, false);
 
 dragInput.addEventListener('change', function(e) {
-	dragCoeff = dragInput.value;
+	dragCoeff = parseInt(dragInput.value);
 }, false);
+
 scaleInput.addEventListener('change', function(e) {
-	scaleCoeff = scaleInput.value;
+	scaleCoeff = parseInt(scaleInput.value);
 }, false);
 
 // Functions
