@@ -1,12 +1,14 @@
 
 // Global Variables
+
 var canvas, context, H, W, gOrigin;
-var particleCount = 7500; var particles = new Array();
-var scaleCoeff = 0.01, forceCoeff = 1, dragCoeff = 4;
-var maxVelocity = 1;
+var particleCount = 10000; var particles = new Array();
+var scaleCoeff = 0.01, forceCoeff = 100, dragCoeff = 4;
+var maxVelocity = 1; var mainloop;
 
 // Vector
 // Code from: https://codepen.io/akm2/pen/rHIsa
+
 function Vector(x, y) {
 	this.x = x || 0;
 	this.y = y || 0;
@@ -77,24 +79,6 @@ Vector.prototype = {
 		return Math.atan2(this.y, this.x);
 	},
 
-	angleTo: function(v) {
-		var dx = v.x - this.x,
-			dy = v.y - this.y;
-		return Math.atan2(dy, dx);
-	},
-
-	distanceTo: function(v) {
-		var dx = v.x - this.x,
-			dy = v.y - this.y;
-		return Math.sqrt(dx * dx + dy * dy);
-	},
-
-	lerp: function(v, t) {
-		this.x += (v.x - this.x) * t;
-		this.y += (v.y - this.y) * t;
-		return this;
-	},
-
 	clone: function() {
 		return new Vector(this.x, this.y);
 	},
@@ -105,6 +89,7 @@ Vector.prototype = {
 };
 
 // Particles
+
 function Particle(x, y) {
 	this.position = new Vector(x || 0, y || 0);
 	this.velocity = new Vector();
@@ -136,13 +121,14 @@ Particle.prototype = {
 
 		var friction = RNormal.clone().scale(-1 * dragCoeff).scale(scaleCoeff);
 		var gravity = RNormal.clone().scale(forceCoeff / (1 + RLength * RLength)).scale(scaleCoeff);
+		
+		var v = this.velocity.length();
 
-		this.acceleration = Vector.sub(gravity, friction);
+		this.acceleration = Vector.sub(gravity, friction).scale(Math.abs(4 * dragCoeff/(1 + dragCoeff * dragCoeff)));
 
 		// Velocity
 		this.velocity.x += this.acceleration.x;
 		this.velocity.y += this.acceleration.y;
-		var v = this.velocity.length();
 		if (v > maxVelocity) maxVelocity = v;
 
 		// Position
@@ -151,7 +137,48 @@ Particle.prototype = {
 	}
 };
 
+// Events
+var cog = document.getElementById("cog");
+var controls = document.getElementById("controls");
+var particleInput = document.getElementById("particleInput");
+var forceInput = document.getElementById("forceInput");
+var dragInput = document.getElementById("dragInput");
+var scaleInput = document.getElementById("scaleInput");
+
+canvas.addEventListener('mousedown', function(e) {
+	gOrigin.x = e.clientX;
+	gOrigin.y = e.clientY;
+}, false);
+
+cog.addEventListener('mousedown', function(e) {
+	cog.classList.toggle("open");
+	controls.classList.toggle("open");
+}, false);
+
+controls.addEventListener('mouseleave', function(e) {
+	cog.classList.remove("open");
+	controls.classList.remove("open");
+}, false);
+
+particleInput.addEventListener('change', function(e) {
+	particleCount = particleInput.value;
+	clearInterval(mainloop);
+	mainloop = setInterval(loop, 10); 
+}, false);
+
+forceInput.addEventListener('change', function(e) {
+	forceCoeff = forceInput.value;
+}, false);
+
+dragInput.addEventListener('change', function(e) {
+	dragCoeff = dragInput.value;
+}, false);
+scaleInput.addEventListener('change', function(e) {
+	scaleCoeff = scaleInput.value;
+}, false);
+
 // Functions
+
 function loop() {
 	context.clearRect(0, 0, W, H);
 	for (var i = 0; i < particleCount; i++) {
@@ -174,12 +201,12 @@ function setup() {
 		particles.push(p);
 	}
 
-	setInterval(loop, 10);
+	particleInput.setAttribute("value", particleCount);
+	forceInput.setAttribute("value", forceCoeff);
+	dragInput.setAttribute("value", dragCoeff);
+	scaleInput.setAttribute("value", scaleCoeff);
+
+	mainloop = setInterval(loop, 10);
 };
 
 document.onload = setup();
-
-window.addEventListener('mousedown', function(e) {
-	gOrigin.x = e.clientX;
-	gOrigin.y = e.clientY;
-}, false);
