@@ -3,7 +3,7 @@
 
 var canvas, context, H, W, gOrigin;
 var particleCount = 5000; var particles = new Array();
-var scaleCoeff = 0.01, forceCoeff = 100, dragCoeff = 4;
+var scaleCoeff = 0.01, forceCoeff = 100, dragCoeff = 2;
 var maxVelocity = 1; var mainloop;
 
 // Vector

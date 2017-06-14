@@ -128,3 +128,32 @@ h2 {
 		}
 	}
 }
+
+.max {
+	position: absolute;
+	bottom: 30px;
+	left: 30px;
+	height: 2rem;
+	width: 9rem;
+	z-index: 99;
+	transition: all 0.2s ease;
+	background: white;
+	&.open {
+		transform: rotate(45deg);
+		.fa {
+			color: #ccc;
+		}
+	}
+	@media (max-width: 1000px) {
+		top: 10px; bottom: auto;
+	}
+	.fa {
+		position: absolute;
+		display: block;
+		top: 0.5rem;
+		left: 50%;
+		transform: translate(-50%, 0);
+		font-size: 1rem;
+		color: white;
+	}
+}
