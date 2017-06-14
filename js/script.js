@@ -172,15 +172,15 @@ particleInput.addEventListener('change', function(e) {
 }, false);
 
 forceInput.addEventListener('change', function(e) {
-	forceCoeff = parseInt(forceInput.value);
+	forceCoeff = parseFloat(forceInput.value);
 }, false);
 
 dragInput.addEventListener('change', function(e) {
-	dragCoeff = parseInt(dragInput.value);
+	dragCoeff = parseFloat(dragInput.value);
 }, false);
 
 scaleInput.addEventListener('change', function(e) {
-	scaleCoeff = parseInt(scaleInput.value);
+	scaleCoeff = parseFloat(scaleInput.value);
 }, false);
 
 // Functions
