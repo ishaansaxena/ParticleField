@@ -5,6 +5,7 @@ var canvas, context, H, W, gOrigin;
 var particleCount = 5000; var particles = new Array();
 var scaleCoeff = 0.01, forceCoeff = 100, dragCoeff = 2;
 var maxVelocity = 1; var mainloop;
+var gravityPoints = new Array();
 
 // Vector
 // Code from: https://codepen.io/akm2/pen/rHIsa
@@ -98,7 +99,11 @@ function Particle(x, y) {
 
 Particle.random = function() {
 	var p = new Particle();
-	p.position = new Vector(Math.random() * /*H + (W-H)/2*/ W, Math.random() * H);
+	p.position = new Vector(Math.random() * H + (W-H)/2, Math.random() * H);
+	while (p.position.sub(gOrigin).length() > 4 * H/10) {
+		p.position = new Vector(Math.random() * H + (W-H)/2, Math.random() * H);
+	}
+	p.position = p.position.add(gOrigin);
 	return p;
 }
 
@@ -115,10 +120,9 @@ Particle.prototype = {
 	},
 	update: function() {
 		// Acceleration
-		var R = Vector.sub(gOrigin, this.position);
+		var R = Vector.sub(gravityPoints[0], this.position);
 		var RLength = R.length();
 		var RNormal = R.normalize();
-
 		var friction = RNormal.clone().scale(-1 * dragCoeff).scale(scaleCoeff);
 		var gravity = RNormal.clone().scale(forceCoeff / (1 + RLength * RLength)).scale(scaleCoeff);
 		
@@ -137,17 +141,76 @@ Particle.prototype = {
 	}
 };
 
+// Functions
+
+function loop() {
+	context.clearRect(0, 0, W, H);
+	for (var i = 0; i < particleCount; i++) {
+		var p = particles[i];
+		p.update();
+		p.render();
+	}
+};
+
+function setup() {
+	canvas = document.getElementById('canvas');
+	context = canvas.getContext('2d');
+	canvas.height = H = document.body.clientHeight;
+	canvas.width = W = document.body.clientWidth;
+
+	gOrigin = new Vector(W/2, H/2);
+	gravityPoints.push(gOrigin);
+
+	for (var i = 0; i < particleCount; i++) {
+		var p = Particle.random();
+		particles.push(p);
+	}
+
+	particleInput.setAttribute("value", particleCount);
+	forceInput.setAttribute("value", forceCoeff);
+	dragInput.setAttribute("value", dragCoeff);
+	scaleInput.setAttribute("value", scaleCoeff);
+
+	mainloop = setInterval(loop, 10);
+};
+
 // Events
+
 var cog = document.getElementById("cog");
 var controls = document.getElementById("controls");
 var particleInput = document.getElementById("particleInput");
 var forceInput = document.getElementById("forceInput");
 var dragInput = document.getElementById("dragInput");
 var scaleInput = document.getElementById("scaleInput");
+var mouseDown = false;
+
+document.onload = setup();
 
 canvas.addEventListener('mousedown', function(e) {
-	gOrigin.x = e.clientX;
-	gOrigin.y = e.clientY;
+	mouseDown = true;
+	gravityPoints = new Array();
+	var v = new Vector(e.clientX, e.clientY);
+	gravityPoints.push(new Vector(e.clientX || e.x, e.clientY || e.y));
+}, false);
+
+canvas.addEventListener('mouseup', function(e) {
+	mouseDown = false;
+}, false);
+
+canvas.addEventListener('mousemove', function(e) {
+	if (mouseDown) {
+		mouseDown = true;
+		gravityPoints = new Array();
+		var v = new Vector(e.clientX, e.clientY);
+		gravityPoints.push(new Vector(e.clientX || e.x, e.clientY || e.y));
+	}
+}, false);
+
+canvas.addEventListener("dblclick", function(e) {
+	if (gravityPoints.length <= 5) {
+		var v = new Vector(e.clientX, e.clientY);
+		gravityPoints.push(new Vector(e.clientX || e.x, e.clientY || e.y));
+	}
 }, false);
 
 cog.addEventListener('mousedown', function(e) {
@@ -182,37 +245,3 @@ dragInput.addEventListener('change', function(e) {
 scaleInput.addEventListener('change', function(e) {
 	scaleCoeff = parseFloat(scaleInput.value);
 }, false);
-
-// Functions
-
-function loop() {
-	context.clearRect(0, 0, W, H);
-	for (var i = 0; i < particleCount; i++) {
-		var p = particles[i];
-		p.update();
-		p.render();
-	}
-};
-
-function setup() {
-	canvas = document.getElementById('canvas');
-	context = canvas.getContext('2d');
-	canvas.height = H = document.body.clientHeight;
-	canvas.width = W = document.body.clientWidth;
-
-	gOrigin = new Vector(W/2, H/2);
-
-	for (var i = 0; i < particleCount; i++) {
-		var p = Particle.random();
-		particles.push(p);
-	}
-
-	particleInput.setAttribute("value", particleCount);
-	forceInput.setAttribute("value", forceCoeff);
-	dragInput.setAttribute("value", dragCoeff);
-	scaleInput.setAttribute("value", scaleCoeff);
-
-	mainloop = setInterval(loop, 10);
-};
-
-document.onload = setup();
